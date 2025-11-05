@@ -1,47 +1,41 @@
 ###############################################################################
 # ⚙️ variables.tf
-# Define las variables reutilizables de la infraestructura.
-# Las variables permiten parametrizar sin modificar el código fuente.
+# Variables globales reutilizables en los distintos entornos (dev / qa / prod).
+# No incluye valores por defecto para forzar el uso de archivos .tfvars.
 ###############################################################################
 
 # 🌍 Región del despliegue
 variable "location" {
   type        = string
-  description = "Región de Azure donde se crearán los recursos"
-  default     = "eastus"
+  description = "Región de Azure donde se crearán los recursos (eastus, eastus2, etc.)"
 }
 
 # 🏢 Nombre del Resource Group
 variable "resource_group_name" {
   type        = string
-  description = "Nombre del grupo de recursos principal"
-  default     = "rg-terraform-lab"
+  description = "Nombre del grupo de recursos principal donde se crearán los componentes"
 }
 
-# 💾 Nombre del Storage Account (debe ser único globalmente)
+# 💾 Nombre del Storage Account
 variable "storage_account_name" {
   type        = string
-  description = "Nombre del Storage Account"
-  default     = "stterraformdemo01"
+  description = "Nombre del Storage Account (debe ser único globalmente)"
 }
 
 # 📦 Nombre del contenedor de blobs
 variable "blob_container_name" {
   type        = string
   description = "Nombre del contenedor dentro del Storage Account"
-  default     = "container-demo"
 }
 
-# 🧑‍💻 Etiqueta de propietario (para auditoría)
+# 🧑‍💻 Etiqueta de propietario
 variable "owner" {
   type        = string
   description = "Nombre o correo del responsable de la infraestructura"
-  default     = "alfredo.tornero@scharff.com.pe"
 }
 
 # 🧩 Ambiente (dev, qa, prod)
 variable "environment" {
   type        = string
-  description = "Ambiente de despliegue"
-  default     = "dev"
+  description = "Nombre del entorno de despliegue"
 }

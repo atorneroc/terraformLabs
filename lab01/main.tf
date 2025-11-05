@@ -4,7 +4,7 @@
 # Este ejemplo crea:
 #   1. Un Resource Group (RG)
 #   2. Un Storage Account
-#   3. Un contenedor dentro del Storage (blob container) Test
+#   3. Un contenedor dentro del Storage (blob container)
 ###############################################################################
 
 # 1️⃣ Resource Group: contenedor lógico de recursos Azure
