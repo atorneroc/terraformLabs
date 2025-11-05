@@ -1,0 +1,44 @@
+1. Crear los archivos main, output, provider, variables
+
+2. Crear manualmente estos recursos en azurerm
+# 1️⃣ Grupo de recursos del backend
+az group create -n rg-tfstate -l eastus
+
+# 2️⃣ Storage account único global (usa minúsculas y sin guiones)
+az storage account create \
+  -n scharfftstate \
+  -g rg-tfstate \
+  -l eastus \
+  --sku Standard_LRS
+
+# 3️⃣ Contenedor para los estados
+az storage container create \
+  -n tfstate \
+  --account-name scharfftstate
+
+3. ejecutar estos comandos
+
+#Inicializa el proyecto Terraform (descarga proveedores, módulos y configura el backend).
+#Con -reconfigure, ignora cualquier configuración anterior (por ejemplo, si cambiaste el backend o Storage del state) y reestablece la conexión desde cero.
+#Si no cambiaste el backend, puedes usar simplemente terraform init (sin -reconfigure).
+terraform init -reconfigure
+#Formatea automáticamente los archivos .tf según el estilo oficial de HashiCorp (indentación, espacios, etc.).
+terraform fmt
+#Revisa que los archivos .tf sean válidos sintácticamente y estructuralmente.
+#Verifica que las referencias entre recursos, variables y outputs sean correctas.
+#No conecta con Azure (solo analiza la lógica local).
+terraform validate
+#Calcula qué acciones ejecutará Terraform comparando el estado actual (local o remoto) con tu código .tf.
+#Muestra un resumen tipo:
+#Plan: 3 to add, 0 to change, 0 to destroy.
+terraform plan
+
+4. Si está todo OK el terraform plan, ejecutar el siguiente comando.
+#Aplica los cambios reales en Azure (crea, actualiza o elimina recursos según el plan).
+#El flag -auto-approve omite la confirmación manual (útil en entornos CI/CD o pruebas locales).
+#En producción, normalmente no se usa el -auto-approve (para forzar revisión manual).
+terraform apply -auto-approve
+
+
+5. Para eliminar todo lo creado por Terraform ejecutar el siguiente comando
+terraform destroy -auto-approve

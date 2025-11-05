@@ -1,0 +1,69 @@
+# ============================================
+# 🌍 TERRAFORM
+# ============================================
+
+# Carpeta interna donde Terraform guarda proveedores, módulos, etc.
+.terraform/
+.terraform/*
+
+# Archivos de estado y backups
+*.tfstate
+*.tfstate.*
+*.tfstate.backup
+
+# Archivos de variables sensibles
+*.tfvars
+*.tfvars.json
+
+# Archivo de bloqueo de dependencias del proveedor
+.terraform.lock.hcl
+
+# Archivos de crash y planes locales
+crash.log
+crash.*.log
+*.tfplan
+*.backup
+*.bak
+
+# Archivos de sobreescritura local
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# ============================================
+# ⚙️ VISUAL STUDIO CODE / EDITORES
+# ============================================
+
+.vscode/
+.history/
+.idea/
+*.code-workspace
+
+# ============================================
+# 🧪 SISTEMA OPERATIVO
+# ============================================
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+.nfs*
+
+# ============================================
+# 🧰 SHELL / TERMINAL / ENTORNO LOCAL
+# ============================================
+
+# Archivos de entorno
+.env
+.env.*
+*.env.l*
