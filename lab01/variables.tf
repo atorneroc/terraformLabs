@@ -68,3 +68,9 @@ variable "key_vault_name" {
   type        = string
   description = "Nombre del Key Vault para secretos"
 }
+
+variable "api_secret_value" {
+  type        = string
+  description = "Valor del secreto API-SECRET"
+  sensitive   = true # Evita que se muestre en consola o logs
+}
