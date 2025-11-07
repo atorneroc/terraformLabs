@@ -38,8 +38,59 @@ terraform plan -var-file="vars/terraform.dev.tfvars"
 #En producción, normalmente no se usa el -auto-approve (para forzar revisión manual).
 terraform apply -var-file="vars/terraform.dev.tfvars" -auto-approve
 
+5. en resumen, estos son los comnandos
 
-5. Para eliminar todo lo creado por Terraform ejecutar el siguiente comando
+
+#terraform init -reconfigure -backend-config="backend/backend.dev.tfvars"
+terraform init -reconfigure -upgrade -backend-config="backend/backend.dev.tfvars"
+terraform fmt
+terraform validate
+terraform plan -var-file="vars/terraform.dev.tfvars"
+terraform apply -var-file="vars/terraform.dev.tfvars" -auto-approve
+
+
+6. Para eliminar todo lo creado por Terraform ejecutar el siguiente comando
 terraform init -reconfigure -backend-config="backend/backend.dev.tfvars"
 terraform destroy -var-file="vars/terraform.dev.tfvars" -auto-approve
 
+
+#COMANDOS ESENCIALES PARA VALIDACIÓN Y DEPURACIÓN
+#1️⃣ Verificar configuración del contenedor
+az webapp config container show --name app-nsf-dev --resource-group rg-terraform-lab-dev
+#✅ Te muestra la imagen configurada (dockerCustomImageName, dockerRegistryUrl, acrUseManagedIdentityCreds).
+
+
+#2️⃣ Verificar logs en vivo del App Service
+az webapp log tail --name app-nsf-dev --resource-group rg-terraform-lab-dev
+#✅ Útil para confirmar si la imagen se descargó o falló (Pull Image successful o ImagePullFailure).
+
+
+#3️⃣ Obtener el principalId (identidad del App Service)
+az webapp identity show --name app-nsf-dev --resource-group rg-terraform-lab-dev
+#✅ Muestra el ID de la identidad administrada (principalId), que se usa para asignar el rol AcrPull.
+
+
+#4️⃣ Validar el rol AcrPull asignado
+az role assignment list --all --assignee $(az webapp identity show --name app-nsf-dev --resource-group rg-terraform-lab-dev --query principalId -o tsv) --output table
+#✅ Confirma que el App Service tiene el rol AcrPull sobre tu ACR.
+
+
+#5️⃣ Verificar que la autenticación con identidad esté activa
+az webapp show --name app-nsf-dev --resource-group rg-terraform-lab-dev --query "siteConfig.acrUseManagedIdentityCreds"
+#✅ Debe devolver true (si es false, el App Service no puede autenticarse en el ACR).
+
+
+#6️⃣ Confirmar que la imagen configurada coincide con la subida al ACR
+az acr repository show-tags --name acrnsfdevatornero --repository nginx -o table
+#✅ Verifica que el tag (latest en tu caso) existe realmente en el ACR.
+
+
+#7️⃣ Forzar un reinicio del App Service
+az webapp restart --name app-nsf-dev --resource-group rg-terraform-lab-dev
+#✅ Refresca la configuración y fuerza un nuevo pull desde el ACR.
+
+
+
+#💡 Comandos opcionales (solo si hay error)
+#Si alguna vez acrUseManagedIdentityCreds vuelve a false por algún cambio, puedes reactivar manualmente:
+az resource update --ids $(az webapp show --name app-nsf-dev --resource-group rg-terraform-lab-dev --query id -o tsv) --set properties.acrUseManagedIdentityCreds=true

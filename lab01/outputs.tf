@@ -28,3 +28,32 @@ output "container_name" {
   description = "Nombre del contenedor dentro del Storage"
   value       = azurerm_storage_container.sc_demo.name
 }
+
+###############################################################################
+# 📤 Módulo 2 — Outputs
+###############################################################################
+
+output "acr_login_server" {
+  description = "URL del Azure Container Registry"
+  value       = azurerm_container_registry.acr_main.login_server
+}
+
+output "app_service_default_hostname" {
+  description = "Dominio por defecto de la Web App"
+  value       = azurerm_linux_web_app.app_main.default_hostname
+}
+
+output "key_vault_uri" {
+  description = "URI público del Key Vault"
+  value       = azurerm_key_vault.kv_main.vault_uri
+}
+
+output "webapp_url" {
+  description = "URL de la Web App desplegada"
+  value       = azurerm_linux_web_app.app_main.default_hostname
+}
+
+output "acr_name" {
+  description = "Nombre del Azure Container Registry"
+  value       = azurerm_container_registry.acr_main.name
+}

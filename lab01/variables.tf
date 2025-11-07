@@ -39,3 +39,32 @@ variable "environment" {
   type        = string
   description = "Nombre del entorno de despliegue"
 }
+
+
+###############################################################################
+# 🚀 Módulo 2 — Variables para ACR, App Service y Key Vault
+###############################################################################
+
+# 🐳 Nombre del Azure Container Registry
+variable "acr_name" {
+  type        = string
+  description = "Nombre único global del Azure Container Registry"
+}
+
+# ☁️ Nombre del App Service Plan
+variable "app_service_plan_name" {
+  type        = string
+  description = "Nombre del plan de App Service (Linux)"
+}
+
+# 🧩 Nombre de la aplicación Web App Service
+variable "app_service_name" {
+  type        = string
+  description = "Nombre de la Web App contenedorizada"
+}
+
+# 🔐 Nombre del Key Vault
+variable "key_vault_name" {
+  type        = string
+  description = "Nombre del Key Vault para secretos"
+}
