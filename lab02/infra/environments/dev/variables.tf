@@ -154,11 +154,3 @@ variable "func_reports_storage_name" {
   type        = string
   description = "Storage account para la Function Reports"
 }
-
-variable "subscription_id" {
-  type = string
-}
-
-variable "tenant_id" {
-  type = string
-}

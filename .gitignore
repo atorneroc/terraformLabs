@@ -12,8 +12,8 @@
 *.tfstate.backup
 
 # Archivos de variables sensibles
-*.tfvars
-*.tfvars.json
+# *.tfvars
+# *.tfvars.json
 
 # Archivo de bloqueo de dependencias del proveedor
 .terraform.lock.hcl
