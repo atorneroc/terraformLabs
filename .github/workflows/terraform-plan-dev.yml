@@ -1,0 +1,100 @@
+name: "Terraform DEV – Plan"
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "lab02/infra/**"
+
+permissions:
+  id-token: write       # necesario para OIDC
+  contents: read
+  pull-requests: write  # para comentar en el PR
+
+jobs:
+  terraform-plan-dev:
+    runs-on: ubuntu-latest
+    name: "Terraform Plan DEV"
+
+    env:
+      TF_WORKING_DIR: lab02/infra/environments/dev
+
+    steps:
+      - name: ⬇️ Checkout repo
+        uses: actions/checkout@v4
+
+      - name: 🔐 Login to Azure with OIDC
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: 🧰 Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.9.5
+
+      - name: 🌍 Terraform Init
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        run: terraform init -input=false
+
+      - name: ✅ Terraform Validate
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        run: terraform validate
+
+      - name: 📝 Terraform Plan
+        id: plan
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        run: |
+          terraform plan -input=false -no-color -out=tfplan
+          terraform show -no-color tfplan > plan.txt
+
+      - name: 📦 Upload plan artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: terraform-dev-plan
+          path: |
+            ${{ env.TF_WORKING_DIR }}/tfplan
+            ${{ env.TF_WORKING_DIR }}/plan.txt
+
+      - name: 💬 Comment plan on PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+
+            const planPath = path.join(process.env.GITHUB_WORKSPACE, '${{ env.TF_WORKING_DIR }}', 'plan.txt');
+            let planText = fs.readFileSync(planPath, 'utf8');
+
+            // Limitar el tamaño del comentario para no romper GitHub
+            const maxLength = 6000;
+            if (planText.length > maxLength) {
+              planText = planText.substring(0, maxLength) + '\n\n...[plan truncated]';
+            }
+
+            const body = `
+✅ **Terraform PLAN (DEV) completado**
+
+Ruta: \`lab02/infra/environments/dev\`
+
+<details>
+<summary>Ver plan</summary>
+
+\`\`\`
+${planText}
+\`\`\`
+
+</details>
+
+_El archivo de plan completo se adjuntó como artifact \`terraform-dev-plan\`._
+`;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body,
+            });

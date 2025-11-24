@@ -1,0 +1,56 @@
+name: "Terraform DEV – Apply"
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "lab02/infra/**"
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  terraform-apply-dev:
+    runs-on: ubuntu-latest
+    name: "Terraform Apply DEV"
+
+    # Esto activa el Environment 'dev' y pide tu aprobación
+    environment:
+      name: dev
+
+    env:
+      TF_WORKING_DIR: lab02/infra/environments/dev
+
+    steps:
+      - name: ⬇️ Checkout repo
+        uses: actions/checkout@v4
+
+      - name: 🔐 Login to Azure with OIDC
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: 🧰 Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.9.5
+
+      - name: 🌍 Terraform Init
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        run: terraform init -input=false
+
+      - name: ✅ Terraform Validate
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        run: terraform validate
+
+      - name: 📝 Terraform Plan (solo para logs)
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        run: terraform plan -input=false -no-color
+
+      - name: 🚀 Terraform Apply
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        run: terraform apply -input=false -auto-approve
