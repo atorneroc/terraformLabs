@@ -69,14 +69,13 @@ jobs:
             const planPath = path.join(process.env.GITHUB_WORKSPACE, '${{ env.TF_WORKING_DIR }}', 'plan.txt');
             let planText = fs.readFileSync(planPath, 'utf8');
 
-            // Limitar el tamaño del comentario para no romper GitHub
             const maxLength = 6000;
             if (planText.length > maxLength) {
               planText = planText.substring(0, maxLength) + '\n\n...[plan truncated]';
             }
 
             const body = `
-✅ **Terraform PLAN (DEV) completado**
+### Terraform PLAN (DEV) completado
 
 Ruta: \`lab02/infra/environments/dev\`
 
@@ -89,7 +88,7 @@ ${planText}
 
 </details>
 
-_El archivo de plan completo se adjuntó como artifact \`terraform-dev-plan\`._
+_El archivo de plan completo se adjuntó como artifact **terraform-dev-plan**._
 `;
 
             github.rest.issues.createComment({
