@@ -165,6 +165,11 @@ resource "azurerm_linux_web_app" "app_main" {
 
     # 🔐 Referencia segura a Key Vault
     "API_KEY" = "@Microsoft.KeyVault(SecretUri=${azurerm_key_vault_secret.api_key_secret.id})"
+
+    # 📊 Integración con Application Insights
+    "APPINSIGHTS_INSTRUMENTATIONKEY"             = azurerm_application_insights.app_insights.instrumentation_key
+    "APPLICATIONINSIGHTS_CONNECTION_STRING"      = azurerm_application_insights.app_insights.connection_string
+    "ApplicationInsightsAgent_EXTENSION_VERSION" = "~3"
   }
 
   # Dependencias explícitas
@@ -202,11 +207,12 @@ resource "azurerm_role_assignment" "acr_pull" {
 }
 
 ###############################################################################
-# 1️⃣1️⃣ Fuerza la habilitación de acrUseManagedIdentityCreds
+# 1️⃣1️⃣ Habilita el uso de Managed Identity para extraer imágenes del ACR
 ###############################################################################
+
 resource "azapi_update_resource" "enable_acr_identity" {
-  type        = "Microsoft.Web/sites@2022-09-01"
-  resource_id = azurerm_linux_web_app.app_main.id
+  type                      = "Microsoft.Web/sites@2022-09-01"
+  resource_id               = azurerm_linux_web_app.app_main.id
 
   body = jsonencode({
     properties = {
@@ -217,6 +223,7 @@ resource "azapi_update_resource" "enable_acr_identity" {
   })
 
   depends_on = [
+    azurerm_linux_web_app.app_main,
     azurerm_role_assignment.acr_pull,
     time_sleep.wait_for_identity
   ]

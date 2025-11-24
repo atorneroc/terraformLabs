@@ -74,3 +74,15 @@ variable "api_secret_value" {
   description = "Valor del secreto API-SECRET"
   sensitive   = true # Evita que se muestre en consola o logs
 }
+
+variable "alert_email" {
+  type        = string
+  description = "Correo electrónico para recibir alertas"
+  default     = "atorneroc.94@gmail.com"
+}
+
+variable "alert_cpu_threshold" {
+  type        = number
+  description = "Porcentaje de CPU que dispara la alerta"
+  default     = 80
+}

@@ -70,9 +70,7 @@ az webapp log tail --name app-nsf-dev --resource-group rg-terraform-lab-dev
 az webapp identity show --name app-nsf-dev --resource-group rg-terraform-lab-dev
 
 ## 4️⃣ Validar el rol AcrPull asignado
-az role assignment list --all \
-  --assignee $(az webapp identity show --name app-nsf-dev --resource-group rg-terraform-lab-dev --query principalId -o tsv) \
-  --output table
+az role assignment list --all --assignee $(az webapp identity show --name app-nsf-dev --resource-group rg-terraform-lab-dev --query principalId -o tsv) --output table
 
 ## 5️⃣ Verificar que la autenticación con identidad esté activa
 az webapp show --name app-nsf-dev --resource-group rg-terraform-lab-dev --query "siteConfig.acrUseManagedIdentityCreds"
