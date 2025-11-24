@@ -26,7 +26,6 @@ apim_sku_name        = "Developer_1"
 
 pg_name                  = "pgflex-nsf-dev-tf"
 pg_admin_login           = "pgadmin"
-pg_admin_password        = "ChangeM3Now!"   # en real lo moverías a variable de entorno / Key Vault
 pg_sku_name              = "GP_Standard_D2ds_v5"
 pg_storage_mb            = 32768
 pg_version               = "16"

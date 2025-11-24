@@ -38,6 +38,8 @@ jobs:
           echo "ARM_SUBSCRIPTION_ID=${{ secrets.AZURE_SUBSCRIPTION_ID }}" >> $GITHUB_ENV
           echo "ARM_USE_OIDC=true" >> $GITHUB_ENV
 
+      - name: 🔐 Export PostgreSQL admin password
+        run: echo "TF_VAR_pg_admin_password=${{ secrets.PG_ADMIN_PASSWORD_DEV }}" >> $GITHUB_ENV
 
       - name: 🧰 Setup Terraform
         uses: hashicorp/setup-terraform@v3
