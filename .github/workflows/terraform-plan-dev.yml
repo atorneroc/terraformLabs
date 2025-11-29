@@ -58,11 +58,14 @@ jobs:
         working-directory: ${{ env.TF_WORKING_DIR }}
         run: terraform validate
 
-      # Opcional: TFLint (linting de Terraform)
-      - name: 🧪 TFLint
-        uses: terraform-linters/tflint-action@v0
+      - name: 🧪 Setup TFLint
+        uses: terraform-linters/setup-tflint@v6
         with:
-          working_directory: ${{ env.TF_WORKING_DIR }}
+          tflint_version: latest  # o fija una versión si quieres
+
+      - name: 🧪 Run TFLint
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        run: tflint --recursive
         continue-on-error: true
 
       # Opcional: tfsec (escáner de seguridad IaC)
