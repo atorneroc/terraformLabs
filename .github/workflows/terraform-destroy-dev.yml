@@ -2,34 +2,43 @@ name: "Terraform DEV – Destroy"
 
 on:
   workflow_dispatch:
+    inputs:
+      confirm:
+        description: "Escribe 'destroy-dev' para confirmar la destrucción del entorno DEV"
+        required: true
+        type: string
 
 permissions:
   id-token: write
   contents: read
 
+env:
+  TF_WORKING_DIR: lab02/infra/environments/dev
+
 jobs:
-  terraform-destroy-dev:
+  destroy:
     runs-on: ubuntu-latest
     name: "Terraform Destroy DEV"
-
-    environment:
-      name: dev   # Require approval before execution
-
-    env:
-      TF_WORKING_DIR: lab02/infra/environments/dev
+    environment: dev
 
     steps:
-      - name: ⬇️ Checkout repo
+      - name: 🔐 Validar confirmación
+        run: |
+          if [ "${{ github.event.inputs.confirm }}" != "destroy-dev" ]; then
+            echo "La frase de confirmación no coincide. Abortando."
+            exit 1
+          fi
+
+      - name: ⬇️ Checkout
         uses: actions/checkout@v4
 
-      - name: 🔐 Login to Azure with OIDC
+      - name: 🔐 Login to Azure using OIDC
         uses: azure/login@v2
         with:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
-      # Export ARM_* variables so Terraform uses OIDC auth
       - name: 🔑 Export Azure credentials for Terraform
         run: |
           echo "ARM_CLIENT_ID=${{ secrets.AZURE_CLIENT_ID }}" >> $GITHUB_ENV
@@ -37,23 +46,18 @@ jobs:
           echo "ARM_SUBSCRIPTION_ID=${{ secrets.AZURE_SUBSCRIPTION_ID }}" >> $GITHUB_ENV
           echo "ARM_USE_OIDC=true" >> $GITHUB_ENV
 
-      # Export secure variables (PostgreSQL password, if needed)
       - name: 🔐 Export PostgreSQL admin password
         run: echo "TF_VAR_pg_admin_password=${{ secrets.PG_ADMIN_PASSWORD_DEV }}" >> $GITHUB_ENV
 
-      - name: 🧰 Setup Terraform
+      - name: 🧱 Setup Terraform
         uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: 1.9.5
+          terraform_version: 1.6.6
 
-      - name: 🌍 Terraform Init
+      - name: ✅ Terraform init
         working-directory: ${{ env.TF_WORKING_DIR }}
         run: terraform init -input=false
 
-      - name: 📝 Terraform Plan Destroy
+      - name: 💥 Terraform destroy
         working-directory: ${{ env.TF_WORKING_DIR }}
-        run: terraform plan -destroy -no-color
-
-      - name: 💣 Terraform Destroy
-        working-directory: ${{ env.TF_WORKING_DIR }}
-        run: terraform destroy -auto-approve -no-color
+        run: terraform destroy -input=false -auto-approve

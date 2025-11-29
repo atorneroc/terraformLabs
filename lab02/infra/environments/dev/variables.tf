@@ -1,7 +1,12 @@
 # Global / comunes
 variable "location" {
   type        = string
-  description = "Región"
+  description = "Región de Azure (por ejemplo, East US)"
+
+  validation {
+    condition     = length(var.location) > 0
+    error_message = "La variable 'location' no puede estar vacía."
+  }
 }
 
 variable "tags" {
@@ -154,3 +159,14 @@ variable "func_reports_storage_name" {
   type        = string
   description = "Storage account para la Function Reports"
 }
+
+variable "acr_name" {
+  type        = string
+  description = "Nombre del ACR"
+}
+
+variable "acr_sku" {
+  type        = string
+  description = "SKU del ACR"
+}
+

@@ -43,12 +43,12 @@ module "aks" {
 module "apim" {
   source = "../../modules/apim"
 
-  apim_name            = var.apim_name
-  resource_group_name  = module.resource_group.name
-  location             = var.location
-  publisher_name       = var.apim_publisher_name
-  publisher_email      = var.apim_publisher_email
-  sku_name             = var.apim_sku_name
+  apim_name           = var.apim_name
+  resource_group_name = module.resource_group.name
+  location            = var.location
+  publisher_name      = var.apim_publisher_name
+  publisher_email     = var.apim_publisher_email
+  sku_name            = var.apim_sku_name
 
   tags = var.tags
 }
@@ -57,28 +57,28 @@ module "apim" {
 module "postgres" {
   source = "../../modules/postgres"
 
-  pg_name                = var.pg_name
-  resource_group_name    = module.resource_group.name
-  location               = var.location
-  admin_login            = var.pg_admin_login
-  admin_password         = var.pg_admin_password
-  sku_name               = var.pg_sku_name
-  storage_mb             = var.pg_storage_mb
-  pg_version             = var.pg_version
-  ha_enabled             = var.pg_ha_enabled
-  zone                   = var.pg_zone
-  tags = var.tags
+  pg_name             = var.pg_name
+  resource_group_name = module.resource_group.name
+  location            = var.location
+  admin_login         = var.pg_admin_login
+  admin_password      = var.pg_admin_password
+  sku_name            = var.pg_sku_name
+  storage_mb          = var.pg_storage_mb
+  pg_version          = var.pg_version
+  ha_enabled          = var.pg_ha_enabled
+  zone                = var.pg_zone
+  tags                = var.tags
 }
 
 # 6) Function App Billing
 module "func_billing" {
   source = "../../modules/function_app"
 
-  resource_group_name   = module.resource_group.name
-  location              = var.location
-  func_name             = var.func_billing_name
-  storage_account_name  = var.func_billing_storage_name
-  plan_sku_name         = "Y1"
+  resource_group_name  = module.resource_group.name
+  location             = var.location
+  func_name            = var.func_billing_name
+  storage_account_name = var.func_billing_storage_name
+  plan_sku_name        = "Y1"
 
   app_settings = {
     "ASPNETCORE_ENVIRONMENT" = "dev"
@@ -92,11 +92,11 @@ module "func_billing" {
 module "func_util" {
   source = "../../modules/function_app"
 
-  resource_group_name   = module.resource_group.name
-  location              = var.location
-  func_name             = var.func_util_name
-  storage_account_name  = var.func_util_storage_name
-  plan_sku_name         = "Y1"
+  resource_group_name  = module.resource_group.name
+  location             = var.location
+  func_name            = var.func_util_name
+  storage_account_name = var.func_util_storage_name
+  plan_sku_name        = "Y1"
 
   app_settings = {
     "ASPNETCORE_ENVIRONMENT" = "dev"
@@ -110,11 +110,11 @@ module "func_util" {
 module "func_reports" {
   source = "../../modules/function_app"
 
-  resource_group_name   = module.resource_group.name
-  location              = var.location
-  func_name             = var.func_reports_name
-  storage_account_name  = var.func_reports_storage_name
-  plan_sku_name         = "Y1"
+  resource_group_name  = module.resource_group.name
+  location             = var.location
+  func_name            = var.func_reports_name
+  storage_account_name = var.func_reports_storage_name
+  plan_sku_name        = "Y1"
 
   app_settings = {
     "ASPNETCORE_ENVIRONMENT" = "dev"
@@ -122,4 +122,15 @@ module "func_reports" {
   }
 
   tags = var.tags
+}
+
+# 9) Azure Container Registry
+module "acr" {
+  source = "../../modules/acr"
+
+  acr_name            = var.acr_name
+  resource_group_name = module.resource_group.name
+  location            = var.location
+  acr_sku             = var.acr_sku
+  tags                = var.tags
 }
