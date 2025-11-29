@@ -123,3 +123,14 @@ module "func_reports" {
 
   tags = var.tags
 }
+
+# 9) Azure Container Registry
+module "acr" {
+  source = "../../modules/acr"
+
+  acr_name            = var.acr_name
+  resource_group_name = module.resource_group.name
+  location            = var.location
+  acr_sku             = var.acr_sku
+  tags                = var.tags
+}

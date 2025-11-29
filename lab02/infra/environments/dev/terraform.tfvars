@@ -41,5 +41,8 @@ func_util_storage_name    = "stnsfdevfuncutiltf"
 func_reports_name         = "func-nsf-dev-reports-tf"
 func_reports_storage_name = "stnsfdevfuncreportstf"
 
+acr_name = "acrnsfdevtf"
+acr_sku  = "Basic"
+
 # subscription_id = "86462eaa-68cf-4d00-bac6-cd07b1968a49"
 # tenant_id       = "d3acff10-5531-465c-b3fd-9186f2fab5cf"
